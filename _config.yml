@@ -1,0 +1,31 @@
+title: safe6-Blog
+description: "A Jekyll Blog Theme For Hackers"
+author:
+  name: "safe6"
+  email: "no"
+  url: "https://safe6.github.io/"
+
+baseurl: /
+
+source: .
+destination: ./_site
+permalink: /:title
+paginate: 10
+paginate_path: /page/:num/
+
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+
+future: true
+plugins:
+  - jekyll-seo-tag
+  - jekyll-paginate
+  - jekyll-sitemap
+
+owner : "safe6"
+year : "2025"
