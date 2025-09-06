@@ -13,9 +13,9 @@ categories: Moblie sec
 
 ## 笔记记录
 
-以下内容，完全是，搭建过程中的记录，看看就行。
+以下内容，完全是搭建过程中的记录，看看就行，有点乱。
 
-
+### 前置
 
 首先、依赖`virtualenv` 和 `virtualenvwrapper`
 
@@ -39,7 +39,7 @@ python3.8 -m pip install virtualenv virtualenvwrapper
 
 ```
 
-
+### Windows系统安装
 windows 直接用这个是最方便，不怎么需要折腾
 ```
 pip install virtualenvwrapper-win -i https://pypi.tuna.tsinghua.edu.cn/simple
@@ -53,11 +53,16 @@ pip install frida-tools -i https://pypi.tuna.tsinghua.edu.cn/simple
 workon py310
 ```
 
+### mac系统安装
+mac 多版本python共存。
+思路：首先，把python3.8设置为系统默认python版本，然后其他的由pyenv来管理。
 
-mac 多版本python共存
-首先，把python3.8设置为系统默认python版本，然后其他的由pyenv来管理
+python3.8 直接去下载mac app。不要用brew，因为停更了，安装不上。
+
 ```
-取消链接由brew安装的python，后面使用pyenv来做多版本管理，不能直接卸载，因为还有很多依赖的工具，比如sqlmap这些。
+1、安装python3.8 app
+
+2、取消链接由brew安装的python，后面使用pyenv来做多版本管理，不能直接卸载，因为还有很多依赖的工具，比如sqlmap这些。
 brew list |grep python
 brew unlink python
 brew unlink python@3.11
@@ -67,19 +72,21 @@ sudo rm -rf /usr/local/bin/python
 sudo ln -s /usr/local/bin/python3 /usr/local/bin/python
 
 
-第二步pyenv接管,python环境
+3、安装pyenv，接管python环境
 brew reinstall pyenv
 
 vim ~/.zshrc
 
+# 加在最后面
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 source ~/.zshrc
 
-安装一下其他版本的python
+4、看自己需求安装一下其他版本的python
 
 pyenv install 3.9
 pyenv install 3.10
@@ -97,17 +104,43 @@ pyenv versions
 查看当前版本
 pyenv version
 
+
+完成上面步骤，共存就完成了。
 ```
 
+### 虚拟环境
+
+```
+
+推荐全部用虚拟环境，不要破坏原有的环境，不同程序需要的依赖版本不一样，全部隔离开。
+
+创建 py3.8环境(system自带环境)
+pyenv virtualenv system frida16
+
+创建一个开发环境
+pyenv virtualenv 3.10.18 dev
+
+删除环境
+pyenv virtualenv-delete dev 
+
+切换环境
+pyenv activate frida16
+```
+
+
+
+
+### frida版本共存
 python版本共存解决之后，再来看frida版本问题
 python3.8使用frida14,但是只支持Windows，mac彻底不支持frida14,最低版本为16
 
 ```
-pyenv virtualenv system frida16
-快速切换
+
+切换到frida16
 pyenv activate frida16
 
 
+# 推荐安装的版本，脱到最后面有版本对应关系。
 pip list |grep frida  
 
 frida           16.5.7
@@ -142,97 +175,6 @@ frida=tools最新版是14
 https://github.com/hackcatml/ajeossida
 
 
-
-## frida 与 frida-tools 对应关系
-
-来自看雪https://bbs.kanxue.com/thread-280436.htm
-
-```
-frida-tools==1.0.0 ------ 12.0.0<=frida<13.0.0  
-frida-tools==1.1.0 ------ 12.0.0<=frida<13.0.0  
-frida-tools==1.2.0 ------ 12.1.0<=frida<13.0.0  
-frida-tools==1.2.1 ------ 12.1.0<=frida<13.0.0  
-frida-tools==1.2.2 ------ 12.1.0<=frida<13.0.0  
-frida-tools==1.2.3 ------ 12.1.0<=frida<13.0.0  
-frida-tools==1.3.0 ------ 12.3.0<=frida<13.0.0  
-frida-tools==1.3.1 ------ 12.3.0<=frida<13.0.0  
-frida-tools==1.3.2 ------ 12.4.0<=frida<13.0.0  
-frida-tools==2.0.0 ------ 12.5.3<=frida<13.0.0  
-frida-tools==2.0.1 ------ 12.5.9<=frida<13.0.0  
-frida-tools==2.0.2 ------ 12.5.9<=frida<13.0.0  
-frida-tools==2.1.0 ------ 12.5.9<=frida<13.0.0  
-frida-tools==2.1.1 ------ 12.5.9<=frida<13.0.0  
-frida-tools==2.2.0 ------ 12.5.9<=frida<13.0.0  
-frida-tools==3.0.0 ------ 12.6.17<=frida<13.0.0  
-frida-tools==3.0.1 ------ 12.6.17<=frida<13.0.0  
-frida-tools==4.0.0 ------ 12.6.21<=frida<13.0.0  
-frida-tools==4.0.1 ------ 12.6.21<=frida<13.0.0  
-frida-tools==4.0.2 ------ 12.6.21<=frida<13.0.0  
-frida-tools==4.1.0 ------ 12.6.21<=frida<13.0.0  
-frida-tools==5.0.0 ------ 12.6.21<=frida<13.0.0  
-frida-tools==5.0.1 ------ 12.7.3<=frida<13.0.0  
-frida-tools==5.1.0 ------ 12.7.3<=frida<13.0.0  
-frida-tools==5.2.0 ------ 12.7.3<=frida<13.0.0  
-frida-tools==5.3.0 ------ 12.7.3<=frida<13.0.0  
-frida-tools==5.4.0 ------ 12.7.3<=frida<13.0.0  
-frida-tools==6.0.0 ------ 12.8.5<=frida<13.0.0  
-frida-tools==6.0.1 ------ 12.8.5<=frida<13.0.0  
-frida-tools==7.0.0 ------ 12.8.12<=frida<13.0.0  
-frida-tools==7.0.1 ------ 12.8.12<=frida<13.0.0  
-frida-tools==7.0.2 ------ 12.8.12<=frida<13.0.0  
-frida-tools==7.1.0 ------ 12.8.12<=frida<13.0.0  
-frida-tools==7.2.0 ------ 12.8.12<=frida<13.0.0  
-frida-tools==7.2.1 ------ 12.8.12<=frida<13.0.0  
-frida-tools==7.2.2 ------ 12.8.12<=frida<13.0.0  
-frida-tools==8.0.0 ------ 12.10.4<=frida<13.0.0  
-frida-tools==8.0.1 ------ 12.10.4<=frida<13.0.0  
-frida-tools==8.1.0 ------ 12.10.4<=frida<13.0.0  
-frida-tools==8.1.1 ------ 12.10.4<=frida<13.0.0  
-frida-tools==8.1.2 ------ 12.10.4<=frida<13.0.0  
-frida-tools==8.1.3 ------ 12.10.4<=frida<13.0.0  
-frida-tools==8.2.0 ------ 12.10.4<=frida<13.0.0  
-frida-tools==9.0.0 ------ 14.0.0<=frida<15.0.0  
-frida-tools==9.0.1 ------ 14.0.0<=frida<15.0.0  
-frida-tools==9.1.0 ------ 14.2.0<=frida<15.0.0  
-frida-tools==9.2.0 ------ 14.2.9<=frida<15.0.0  
-frida-tools==9.2.1 ------ 14.2.9<=frida<15.0.0  
-frida-tools==9.2.2 ------ 14.2.9<=frida<15.0.0  
-frida-tools==9.2.3 ------ 14.2.9<=frida<15.0.0  
-frida-tools==9.2.4 ------ 14.2.9<=frida<15.0.0  
-frida-tools==9.2.5 ------ 14.2.9<=frida<15.0.0  
-frida-tools==10.0.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.1.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.1.1 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.2.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.2.1 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.2.2 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.3.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.4.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.4.1 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.5.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.5.1 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.5.2 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.5.3 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.5.4 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.6.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.6.1 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.6.2 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.7.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==10.8.0 ------ 15.0.0<=frida<16.0.0  
-frida-tools==11.0.0 ------ 15.2.0<=frida<16.0.0  
-frida-tools==12.0.0 ------ 16.0.0<=frida<17.0.0  
-frida-tools==12.0.1 ------ 16.0.0<=frida<17.0.0  
-frida-tools==12.0.2 ------ 16.0.0<=frida<17.0.0  
-frida-tools==12.0.3 ------ 16.0.0<=frida<17.0.0  
-frida-tools==12.0.4 ------ 16.0.0<=frida<17.0.0  
-frida-tools==12.1.0 ------ 16.0.0<=frida<17.0.0  
-frida-tools==12.1.1 ------ 16.0.9<=frida<17.0.0  
-frida-tools==12.1.2 ------ 16.0.9<=frida<17.0.0  
-frida-tools==12.1.3 ------ 16.0.9<=frida<17.0.0  
-frida-tools==12.2.0 ------ 16.0.9<=frida<17.0.0  
-frida-tools==12.2.1 ------ 16.0.9<=frida<17.0.0  
-frida-tools==12.3.0 ------ 16.0.9<=frida<17.0.0
-```
 
 
 
@@ -307,7 +249,7 @@ frida -U GM -l r0tracer.js
 
 ## objection使用
 
-其实这才是这篇文章的目录，就是为了用这个。所以一定要解决多版本共存的问题。
+其实这才是这篇文章的目录，就是为了用这个。所以一定要解决多版本共存的问题。这个工具非常的好用，不知道为啥就停更了。
 
 
 
@@ -484,4 +426,98 @@ plugin dexdump search com.j75ed.MainActivity
 
 plugin dexdump dump
 
+```
+
+
+
+
+## frida 与 frida-tools 对应关系
+
+来自看雪https://bbs.kanxue.com/thread-280436.htm
+
+```
+frida-tools==1.0.0 ------ 12.0.0<=frida<13.0.0  
+frida-tools==1.1.0 ------ 12.0.0<=frida<13.0.0  
+frida-tools==1.2.0 ------ 12.1.0<=frida<13.0.0  
+frida-tools==1.2.1 ------ 12.1.0<=frida<13.0.0  
+frida-tools==1.2.2 ------ 12.1.0<=frida<13.0.0  
+frida-tools==1.2.3 ------ 12.1.0<=frida<13.0.0  
+frida-tools==1.3.0 ------ 12.3.0<=frida<13.0.0  
+frida-tools==1.3.1 ------ 12.3.0<=frida<13.0.0  
+frida-tools==1.3.2 ------ 12.4.0<=frida<13.0.0  
+frida-tools==2.0.0 ------ 12.5.3<=frida<13.0.0  
+frida-tools==2.0.1 ------ 12.5.9<=frida<13.0.0  
+frida-tools==2.0.2 ------ 12.5.9<=frida<13.0.0  
+frida-tools==2.1.0 ------ 12.5.9<=frida<13.0.0  
+frida-tools==2.1.1 ------ 12.5.9<=frida<13.0.0  
+frida-tools==2.2.0 ------ 12.5.9<=frida<13.0.0  
+frida-tools==3.0.0 ------ 12.6.17<=frida<13.0.0  
+frida-tools==3.0.1 ------ 12.6.17<=frida<13.0.0  
+frida-tools==4.0.0 ------ 12.6.21<=frida<13.0.0  
+frida-tools==4.0.1 ------ 12.6.21<=frida<13.0.0  
+frida-tools==4.0.2 ------ 12.6.21<=frida<13.0.0  
+frida-tools==4.1.0 ------ 12.6.21<=frida<13.0.0  
+frida-tools==5.0.0 ------ 12.6.21<=frida<13.0.0  
+frida-tools==5.0.1 ------ 12.7.3<=frida<13.0.0  
+frida-tools==5.1.0 ------ 12.7.3<=frida<13.0.0  
+frida-tools==5.2.0 ------ 12.7.3<=frida<13.0.0  
+frida-tools==5.3.0 ------ 12.7.3<=frida<13.0.0  
+frida-tools==5.4.0 ------ 12.7.3<=frida<13.0.0  
+frida-tools==6.0.0 ------ 12.8.5<=frida<13.0.0  
+frida-tools==6.0.1 ------ 12.8.5<=frida<13.0.0  
+frida-tools==7.0.0 ------ 12.8.12<=frida<13.0.0  
+frida-tools==7.0.1 ------ 12.8.12<=frida<13.0.0  
+frida-tools==7.0.2 ------ 12.8.12<=frida<13.0.0  
+frida-tools==7.1.0 ------ 12.8.12<=frida<13.0.0  
+frida-tools==7.2.0 ------ 12.8.12<=frida<13.0.0  
+frida-tools==7.2.1 ------ 12.8.12<=frida<13.0.0  
+frida-tools==7.2.2 ------ 12.8.12<=frida<13.0.0  
+frida-tools==8.0.0 ------ 12.10.4<=frida<13.0.0  
+frida-tools==8.0.1 ------ 12.10.4<=frida<13.0.0  
+frida-tools==8.1.0 ------ 12.10.4<=frida<13.0.0  
+frida-tools==8.1.1 ------ 12.10.4<=frida<13.0.0  
+frida-tools==8.1.2 ------ 12.10.4<=frida<13.0.0  
+frida-tools==8.1.3 ------ 12.10.4<=frida<13.0.0  
+frida-tools==8.2.0 ------ 12.10.4<=frida<13.0.0  
+frida-tools==9.0.0 ------ 14.0.0<=frida<15.0.0  
+frida-tools==9.0.1 ------ 14.0.0<=frida<15.0.0  
+frida-tools==9.1.0 ------ 14.2.0<=frida<15.0.0  
+frida-tools==9.2.0 ------ 14.2.9<=frida<15.0.0  
+frida-tools==9.2.1 ------ 14.2.9<=frida<15.0.0  
+frida-tools==9.2.2 ------ 14.2.9<=frida<15.0.0  
+frida-tools==9.2.3 ------ 14.2.9<=frida<15.0.0  
+frida-tools==9.2.4 ------ 14.2.9<=frida<15.0.0  
+frida-tools==9.2.5 ------ 14.2.9<=frida<15.0.0  
+frida-tools==10.0.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.1.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.1.1 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.2.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.2.1 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.2.2 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.3.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.4.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.4.1 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.5.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.5.1 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.5.2 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.5.3 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.5.4 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.6.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.6.1 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.6.2 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.7.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==10.8.0 ------ 15.0.0<=frida<16.0.0  
+frida-tools==11.0.0 ------ 15.2.0<=frida<16.0.0  
+frida-tools==12.0.0 ------ 16.0.0<=frida<17.0.0  
+frida-tools==12.0.1 ------ 16.0.0<=frida<17.0.0  
+frida-tools==12.0.2 ------ 16.0.0<=frida<17.0.0  
+frida-tools==12.0.3 ------ 16.0.0<=frida<17.0.0  
+frida-tools==12.0.4 ------ 16.0.0<=frida<17.0.0  
+frida-tools==12.1.0 ------ 16.0.0<=frida<17.0.0  
+frida-tools==12.1.1 ------ 16.0.9<=frida<17.0.0  
+frida-tools==12.1.2 ------ 16.0.9<=frida<17.0.0  
+frida-tools==12.1.3 ------ 16.0.9<=frida<17.0.0  
+frida-tools==12.2.0 ------ 16.0.9<=frida<17.0.0  
+frida-tools==12.2.1 ------ 16.0.9<=frida<17.0.0  
+frida-tools==12.3.0 ------ 16.0.9<=frida<17.0.0
 ```
