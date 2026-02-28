@@ -11,6 +11,7 @@ source "https://rubygems.org"
 gem "jekyll-paginate"
 gem "jekyll-sitemap"
 gem "jekyll-seo-tag"
+gem 'jekyll-compose'
 
 gem "jekyll", "~> 4.3.4"
 # This is the default theme for new Jekyll sites. You may change this to anything you like.
